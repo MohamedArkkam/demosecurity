@@ -10,7 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -25,8 +25,10 @@ public class SecurityConfig {
         
         return http
                 .csrf(customizer -> customizer.disable())
-                .authorizeHttpRequests(request -> request.anyRequest().authenticated()) // All requests require authentication by default
-                // .antMatchers("/api/public/**").permitAll() // Public endpoints
+                .authorizeHttpRequests(request -> request
+                    .requestMatchers("/register", "/login").permitAll() // Public endpoints
+                    .anyRequest().authenticated()) // All requests require authentication by default
+                // .antMatchers("register", "login").permitAll() // Public endpoints
                 // .antMatchers("/api/private/**").authenticated() // Private endpoints
                 .httpBasic(Customizer.withDefaults()) // Basic authentication
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Stateless session managemen
@@ -38,7 +40,7 @@ public class SecurityConfig {
     public AuthenticationProvider authenticationProvider() {
 
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setPasswordEncoder(NoOpPasswordEncoder.getInstance()); // No password encoding for simplicity
+        authProvider.setPasswordEncoder(new BCryptPasswordEncoder(12)); // No password encoding for simplicity
         authProvider.setUserDetailsService(userDetailsService); // Use the custom user details service
 
         return authProvider;

@@ -17,9 +17,13 @@ public class UserController {
     
     @PostMapping("/register")
     public Users register(@RequestBody Users user) {
-        // Logic to save the user to the database
-        // For example, using a UserService to handle the registration logic
         return service.register(user);
     }
+
+    @PostMapping("/login")
+    public String login(@RequestBody Users user) {
+        return "Login successful for user: " + user.getUsername();
+
+    }    
 
 }

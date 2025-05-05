@@ -1,6 +1,7 @@
 package com.ecom.demosecurity.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.ecom.demosecurity.model.Users;
@@ -12,9 +13,10 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+
     public Users register(Users user) {
-        // Logic to save the user to the database
-        // For example, using a UserService to handle the registration logic
+        user.setPassword(encoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
